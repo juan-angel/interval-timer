@@ -2,29 +2,29 @@ package dev.randombits.intervaltimer
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.icu.text.DateFormat
 import android.os.Bundle
-import android.service.controls.actions.BooleanAction
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.TextClock
 import androidx.fragment.app.Fragment
 
 private const val ARG_PARAM1 = "active";
 private const val ARG_PARAM2 = "rest";
 private const val ARG_PARAM3 = "show_time";
+private const val ARG_PARAM4 = "setAmount";
 
 class SettingsFragment : Fragment() {
     private var defaultActiveTime: Int = 45;
     private var defaultRestTime: Int = 15;
+    private var defaultSetAmount: Int = 30;
     private var defaultShowTime: Boolean = true;
     private var mainActivity: MainActivity? = null;
     private var activeInput: EditText? = null;
     private var restInput: EditText? = null;
-    private var showTime: CheckBox? = null;
+    private var showTimeInput: CheckBox? = null;
+    private var setAmountInput: EditText? = null;
 
     override fun onAttach(context: Context) {
         super.onAttach(context);
@@ -38,6 +38,7 @@ class SettingsFragment : Fragment() {
             defaultActiveTime = it.getInt(ARG_PARAM1);
             defaultRestTime = it.getInt(ARG_PARAM2);
             defaultShowTime = it.getBoolean(ARG_PARAM3);
+            defaultSetAmount = it.getInt(ARG_PARAM4);
         }
     }
 
@@ -56,42 +57,45 @@ class SettingsFragment : Fragment() {
         activeInput!!.setText(defaultActiveTime.toString());
         restInput = view.findViewById(R.id.restTime);
         restInput!!.setText(defaultRestTime.toString());
+        setAmountInput = view.findViewById(R.id.setAmount);
+        setAmountInput!!.setText(defaultRestTime.toString());
 
         view.findViewById<View>(R.id.activeTime_less).setOnClickListener {
-            changeActiveValue(activeInput!!, defaultActiveTime, -5);
+            changeValue(activeInput!!, defaultActiveTime, -5, 5);
         }
 
         view.findViewById<View>(R.id.restTime_less).setOnClickListener {
-            changeRestValue(restInput!!, defaultRestTime, -5);
+            changeValue(restInput!!, defaultRestTime, -5, 0);
+        }
+
+        view.findViewById<View>(R.id.setAmount_less).setOnClickListener {
+            changeValue(setAmountInput!!, defaultSetAmount, -5, 1);
         }
 
         view.findViewById<View>(R.id.activeTime_more).setOnClickListener {
-            changeActiveValue(activeInput!!, defaultActiveTime, 5);
+            changeValue(activeInput!!, defaultActiveTime, 5, 5);
         }
 
         view.findViewById<View>(R.id.restTime_more).setOnClickListener {
-            changeRestValue(restInput!!, defaultRestTime, 5);
+            changeValue(restInput!!, defaultRestTime, 5, 0);
+        }
+
+        view.findViewById<View>(R.id.setAmount_more).setOnClickListener {
+            changeValue(setAmountInput!!, defaultSetAmount, 5, 0);
         }
 
         view.findViewById<View>(R.id.beginBtn).setOnClickListener { startTimer(); };
     }
 
     @SuppressLint("SetTextI18n")
-    private fun changeRestValue(editText: EditText, defaultValue: Int, change: Int) {
+    private fun changeValue(editText: EditText, defaultValue: Int, change: Int, minVal: Int) {
         val currentValue = editText.text.toString().toIntOrNull() ?: defaultValue;
-        val newValue = (currentValue + change).coerceAtLeast(0);
-        editText.setText(newValue.toString());
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun changeActiveValue(editText: EditText, defaultValue: Int, change: Int) {
-        val currentValue = editText.text.toString().toIntOrNull() ?: defaultValue;
-        val newValue = (currentValue + change).coerceAtLeast(5);
+        val newValue = (currentValue + change).coerceAtLeast(minVal);
         editText.setText(newValue.toString());
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        if (activeInput == null || restInput == null) {
+        if (activeInput == null || restInput == null || showTimeInput == null || setAmountInput == null) {
             return;
         }
         outState.putInt(
@@ -104,19 +108,25 @@ class SettingsFragment : Fragment() {
             Integer.parseInt(restInput!!.text.toString())
         );
 
+        outState.putInt(
+            "settings.setAmount",
+            Integer.parseInt(setAmountInput!!.text.toString())
+        );
+
         super.onSaveInstanceState(outState);
     }
 
     override fun onDestroy() {
         super.onDestroy();
 
-        if (activeInput == null || restInput == null) {
+        if (activeInput == null || restInput == null || showTimeInput == null || setAmountInput == null) {
             return;
         }
         mainActivity!!.savePreferences(
             Integer.parseInt(activeInput!!.text.toString()),
             Integer.parseInt(restInput!!.text.toString()),
-            showTime = showTime!!.isChecked
+            showTime = showTimeInput!!.isChecked,
+            Integer.parseInt(setAmountInput!!.text.toString()),
         );
     }
 
@@ -135,13 +145,16 @@ class SettingsFragment : Fragment() {
     private fun startTimer() {
         var activeTime = Integer.parseInt(requireView().findViewById<EditText>(R.id.activeTime).text.toString());
         var restTime = Integer.parseInt(requireView().findViewById<EditText>(R.id.restTime).text.toString());
-        val showTime = requireView().findViewById<CheckBox>(R.id.show_time).isChecked;
+        val showTime = requireView().findViewById<CheckBox>(R.id.showTime).isChecked;
+        var setAmount = Integer.parseInt(requireView().findViewById<EditText>(R.id.setAmount).text.toString());
 
         if (activeTime < 5)
             activeTime = 5;
         if (restTime < 0)
             restTime = 0;
+        if (setAmount < 1)
+            setAmount = 1;
 
-        mainActivity!!.startTimer(activeTime, restTime, showTime);
+        mainActivity!!.startTimer(activeTime, restTime, showTime, setAmount);
     }
 }

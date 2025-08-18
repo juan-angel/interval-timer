@@ -16,4 +16,6 @@
     <string name="decrease_rest_time">Decrementar Tiempo Descanso</string>
     <string name="increase_rest_time">Incrementar Tiempo Descanso</string>
     <string name="prepareTime_label">Preparado</string>
+    <string name="show_time">Mostrar hora</string>
+    <string name="setAmount_label">Repeticiones</string>
 </resources>

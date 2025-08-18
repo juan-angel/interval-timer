@@ -39,10 +39,10 @@ class MainActivity : AppCompatActivity() {
         alarmSound = soundPool.load(this, R.raw.threesecbeep, 1);
     }
 
-    fun startTimer(activeTime: Int, restTime: Int, showTime: Boolean) {
-        savePreferences(activeTime, restTime, showTime);
+    fun startTimer(activeTime: Int, restTime: Int, showTime: Boolean, setAmount: Int) {
+        savePreferences(activeTime, restTime, showTime, setAmount);
         supportFragmentManager.beginTransaction()
-            .replace(R.id.mainFrame, TimerFragment.newInstance(activeTime, restTime, showTime))
+            .replace(R.id.mainFrame, TimerFragment.newInstance(activeTime, restTime, showTime, setAmount))
             .addToBackStack("start").commit()
     }
 
@@ -50,11 +50,12 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack();
     }
 
-    fun savePreferences(activeTime: Int, restTime: Int, showTime: Boolean) {
+    fun savePreferences(activeTime: Int, restTime: Int, showTime: Boolean, setAmount: Int) {
         val prefs = getSharedPreferences(packageName, MODE_PRIVATE).edit();
         prefs.putInt("activeTime", activeTime);
         prefs.putInt("restTime", restTime);
         prefs.putBoolean("showTime", showTime);
+        prefs.putInt("setAmount", setAmount);
         prefs.apply();
     }
 

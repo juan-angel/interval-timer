@@ -13,11 +13,13 @@ import androidx.fragment.app.Fragment
 private const val ARG_PARAM1 = "active";
 private const val ARG_PARAM2 = "rest";
 private const val ARG_PARAM3 = "showTime";
+private const val ARG_PARAM4 = "setAmount";
 
 class TimerFragment : Fragment() {
     private var activeTime: Int? = null;
     private var restTime: Int? = null;
     private var showTime: Boolean? = null;
+    private var setAmount: Int? = null;
     private var mainActivity: MainActivity? = null;
     private var timer: HiitTimer? = null;
 
@@ -32,7 +34,7 @@ class TimerFragment : Fragment() {
             activeTime = it.getInt(ARG_PARAM1);
             restTime = it.getInt(ARG_PARAM2);
             showTime = it.getBoolean(ARG_PARAM3);
-
+            setAmount = it.getInt(ARG_PARAM4);
         };
     }
 
@@ -59,7 +61,9 @@ class TimerFragment : Fragment() {
         val statusTextView: TextView = view.findViewById(R.id.status);
         val setCountView: TextView = view.findViewById(R.id.setCount);
 
-        timer = object : HiitTimer(activeTime!!, restTime!!) {
+        setCountView.text = setAmount.toString();
+
+        timer = object : HiitTimer(activeTime!!, restTime!!, setAmount!!, ::stopTimer) {
             override fun onUpdate(millisRemaining: Long) {
                 resultTextView.text = ((millisRemaining + 999) / 1000).toString();
 
@@ -115,12 +119,13 @@ class TimerFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(active: Int, rest: Int, showTime: Boolean) =
+        fun newInstance(active: Int, rest: Int, showTime: Boolean, setAmount: Int) =
             TimerFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_PARAM1, active);
                     putInt(ARG_PARAM2, rest);
                     putBoolean(ARG_PARAM3, showTime);
+                    putInt(ARG_PARAM4, setAmount);
                 }
             };
     }
