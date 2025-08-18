@@ -6,9 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.TextClock
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.Calendar
 
 private const val ARG_PARAM1 = "active";
 private const val ARG_PARAM2 = "rest";
@@ -90,6 +96,7 @@ class TimerFragment : Fragment() {
         };
         timer!!.start();
 
+        setFinishTime(view);
         view.findViewById<View>(R.id.time).visibility = if (showTime == true) View.VISIBLE else View.INVISIBLE;
 
         view.findViewById<View>(R.id.pauseBtn).setOnClickListener { pauseTimer(); }
@@ -97,6 +104,15 @@ class TimerFragment : Fragment() {
         view.findViewById<View>(R.id.stopBtn).setOnClickListener { stopTimer(); }
 
         return view;
+    }
+
+    private fun setFinishTime(view: View) {
+        val finishTimeValue = Calendar.getInstance();
+        val finishTime = view.findViewById<TextView>(R.id.finishTime);
+        finishTime.visibility = if (showTime == true) View.VISIBLE else View.INVISIBLE;
+
+        finishTimeValue.add(Calendar.SECOND, ((activeTime!! + restTime!!) * setAmount!!) - restTime!!);
+        finishTime.text = SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(finishTimeValue.time);
     }
 
     private fun pauseTimer() {
