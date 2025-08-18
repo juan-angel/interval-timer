@@ -2,22 +2,29 @@ package dev.randombits.intervaltimer
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.icu.text.DateFormat
 import android.os.Bundle
+import android.service.controls.actions.BooleanAction
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TextClock
 import androidx.fragment.app.Fragment
 
 private const val ARG_PARAM1 = "active";
 private const val ARG_PARAM2 = "rest";
+private const val ARG_PARAM3 = "show_time";
 
 class SettingsFragment : Fragment() {
     private var defaultActiveTime: Int = 45;
     private var defaultRestTime: Int = 15;
+    private var defaultShowTime: Boolean = true;
     private var mainActivity: MainActivity? = null;
     private var activeInput: EditText? = null;
     private var restInput: EditText? = null;
+    private var showTime: CheckBox? = null;
 
     override fun onAttach(context: Context) {
         super.onAttach(context);
@@ -30,6 +37,7 @@ class SettingsFragment : Fragment() {
         arguments?.let {
             defaultActiveTime = it.getInt(ARG_PARAM1);
             defaultRestTime = it.getInt(ARG_PARAM2);
+            defaultShowTime = it.getBoolean(ARG_PARAM3);
         }
     }
 
@@ -107,17 +115,19 @@ class SettingsFragment : Fragment() {
         }
         mainActivity!!.savePreferences(
             Integer.parseInt(activeInput!!.text.toString()),
-            Integer.parseInt(restInput!!.text.toString())
+            Integer.parseInt(restInput!!.text.toString()),
+            showTime = showTime!!.isChecked
         );
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(active: Int, rest: Int) =
+        fun newInstance(active: Int, rest: Int, showTime: Boolean) =
             SettingsFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_PARAM1, active);
                     putInt(ARG_PARAM2, rest);
+                    putBoolean(ARG_PARAM3, showTime)
                 }
             };
     }
@@ -125,10 +135,13 @@ class SettingsFragment : Fragment() {
     private fun startTimer() {
         var activeTime = Integer.parseInt(requireView().findViewById<EditText>(R.id.activeTime).text.toString());
         var restTime = Integer.parseInt(requireView().findViewById<EditText>(R.id.restTime).text.toString());
+        val showTime = requireView().findViewById<CheckBox>(R.id.show_time).isChecked;
+
         if (activeTime < 5)
             activeTime = 5;
         if (restTime < 0)
             restTime = 0;
-        mainActivity!!.startTimer(activeTime, restTime);
+
+        mainActivity!!.startTimer(activeTime, restTime, showTime);
     }
 }

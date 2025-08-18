@@ -12,10 +12,12 @@ import androidx.fragment.app.Fragment
 
 private const val ARG_PARAM1 = "active";
 private const val ARG_PARAM2 = "rest";
+private const val ARG_PARAM3 = "showTime";
 
 class TimerFragment : Fragment() {
     private var activeTime: Int? = null;
     private var restTime: Int? = null;
+    private var showTime: Boolean? = null;
     private var mainActivity: MainActivity? = null;
     private var timer: HiitTimer? = null;
 
@@ -29,6 +31,8 @@ class TimerFragment : Fragment() {
         arguments?.let {
             activeTime = it.getInt(ARG_PARAM1);
             restTime = it.getInt(ARG_PARAM2);
+            showTime = it.getBoolean(ARG_PARAM3);
+
         };
     }
 
@@ -82,6 +86,8 @@ class TimerFragment : Fragment() {
         };
         timer!!.start();
 
+        view.findViewById<View>(R.id.time).visibility = if (showTime == true) View.VISIBLE else View.INVISIBLE;
+
         view.findViewById<View>(R.id.pauseBtn).setOnClickListener { pauseTimer(); }
         view.findViewById<View>(R.id.resumeBtn).setOnClickListener { resumeTimer(); }
         view.findViewById<View>(R.id.stopBtn).setOnClickListener { stopTimer(); }
@@ -109,11 +115,12 @@ class TimerFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(active: Int, rest: Int) =
+        fun newInstance(active: Int, rest: Int, showTime: Boolean) =
             TimerFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_PARAM1, active);
                     putInt(ARG_PARAM2, rest);
+                    putBoolean(ARG_PARAM3, showTime);
                 }
             };
     }

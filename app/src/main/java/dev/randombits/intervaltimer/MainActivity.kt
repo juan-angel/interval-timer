@@ -28,20 +28,21 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences(packageName, MODE_PRIVATE);
         val activeTime = prefs.getInt("activeTime", 45);
         val restTime = prefs.getInt("restTime", 15);
+        val showTime = prefs.getBoolean("showTime", true)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.mainFrame, SettingsFragment.newInstance(activeTime, restTime))
+                .replace(R.id.mainFrame, SettingsFragment.newInstance(activeTime, restTime, showTime))
                 .commit();
         }
 
         alarmSound = soundPool.load(this, R.raw.threesecbeep, 1);
     }
 
-    fun startTimer(activeTime: Int, restTime: Int) {
-        savePreferences(activeTime, restTime);
+    fun startTimer(activeTime: Int, restTime: Int, showTime: Boolean) {
+        savePreferences(activeTime, restTime, showTime);
         supportFragmentManager.beginTransaction()
-            .replace(R.id.mainFrame, TimerFragment.newInstance(activeTime, restTime))
+            .replace(R.id.mainFrame, TimerFragment.newInstance(activeTime, restTime, showTime))
             .addToBackStack("start").commit()
     }
 
@@ -49,10 +50,11 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack();
     }
 
-    fun savePreferences(activeTime: Int, restTime: Int) {
+    fun savePreferences(activeTime: Int, restTime: Int, showTime: Boolean) {
         val prefs = getSharedPreferences(packageName, MODE_PRIVATE).edit();
         prefs.putInt("activeTime", activeTime);
         prefs.putInt("restTime", restTime);
+        prefs.putBoolean("showTime", showTime);
         prefs.apply();
     }
 
