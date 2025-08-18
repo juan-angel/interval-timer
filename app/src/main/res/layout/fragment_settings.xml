@@ -7,6 +7,48 @@
               android:layout_height="match_parent" android:id="@+id/settingsLayout"
               android:gravity="center_vertical">
     <TextView
+        android:text="@string/setAmount_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:id="@+id/setAmountLabel" android:textAlignment="center"
+        android:textSize="20sp" android:fontFamily="monospace" android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" android:textAlignment="center"
+        android:layout_gravity="center">
+
+        <ImageButton
+            android:id="@+id/setAmount_less"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/decrease_active_time"
+            android:padding="16dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/minus" />
+
+        <EditText
+            android:id="@+id/setAmount"
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:inputType="number"
+            android:text="" android:maxLength="4" android:maxWidth="10dp"
+            android:layout_gravity="center|center_horizontal" android:fontFamily="monospace"/>
+
+        <ImageButton
+            android:id="@+id/setAmount_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/increase_active_time"
+            android:padding="16dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/add_24" />
+    </LinearLayout>
+    <TextView
             android:text="@string/activeTime_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/activeTimeLabel" android:textAlignment="center"
@@ -90,7 +132,7 @@
     </LinearLayout>
 
     <CheckBox
-        android:id="@+id/show_time"
+        android:id="@+id/showTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

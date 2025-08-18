@@ -16,4 +16,5 @@
     <string name="increase_rest_time">Increase Rest Time</string>
     <string name="prepareTime_label">Prepare</string>
     <string name="show_time">Show Time</string>
+    <string name="setAmount_label">Sets</string>
 </resources>
