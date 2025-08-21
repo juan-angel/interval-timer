@@ -107,12 +107,15 @@ class TimerFragment : Fragment() {
     }
 
     private fun setFinishTime(view: View) {
+        val finishTimeLabel = StringBuilder();
         val finishTimeValue = Calendar.getInstance();
         val finishTime = view.findViewById<TextView>(R.id.finishTime);
         finishTime.visibility = if (showTime == true) View.VISIBLE else View.INVISIBLE;
 
         finishTimeValue.add(Calendar.SECOND, ((activeTime!! + restTime!!) * setAmount!!) - restTime!!);
-        finishTime.text = SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(finishTimeValue.time);
+        finishTimeLabel.append(getString(R.string.endTime))
+                        .append(": ").append(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(finishTimeValue.time));
+        finishTime.text = finishTimeLabel.toString();
     }
 
     private fun pauseTimer() {
@@ -120,6 +123,7 @@ class TimerFragment : Fragment() {
         mainActivity!!.cancelAlarm();
         requireView().findViewById<View>(R.id.resumeBtn).isVisible = true;
         requireView().findViewById<View>(R.id.pauseBtn).isVisible = false;
+        requireView().findViewById<TextView>(R.id.finishTime).text = String.format("%s: --:--", getString(R.string.endTime));
     }
 
     private fun resumeTimer() {

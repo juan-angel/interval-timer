@@ -17,4 +17,6 @@
     <string name="prepareTime_label">Prepare</string>
     <string name="show_time">Show Time</string>
     <string name="setAmount_label">Sets</string>
+    <string name="currentTime">\'Current: \'k:mm</string>
+    <string name="endTime">End</string>
 </resources>
