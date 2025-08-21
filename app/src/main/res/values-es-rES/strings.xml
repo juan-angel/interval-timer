@@ -18,4 +18,6 @@
     <string name="prepareTime_label">Preparado</string>
     <string name="show_time">Mostrar hora</string>
     <string name="setAmount_label">Repeticiones</string>
+    <string name="currentTime">\'Ahora: \'k:mm</string>
+    <string name="endTime">Fin</string>
 </resources>
