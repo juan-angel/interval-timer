@@ -112,7 +112,7 @@ class TimerFragment : Fragment() {
         val finishTime = view.findViewById<TextView>(R.id.finishTime);
         finishTime.visibility = if (showTime == true) View.VISIBLE else View.INVISIBLE;
 
-        finishTimeValue.add(Calendar.SECOND, ((activeTime!! + restTime!!) * setAmount!!) - restTime!!);
+        finishTimeValue.add(Calendar.SECOND, ((activeTime!! + restTime!!) * setAmount!!) + HiitTimer.PREP_TIME - restTime!!);
         finishTimeLabel.append(getString(R.string.endTime))
                         .append(": ").append(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(finishTimeValue.time));
         finishTime.text = finishTimeLabel.toString();

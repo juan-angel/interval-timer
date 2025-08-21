@@ -15,8 +15,8 @@ abstract class HiitTimer(private val activeTime: Int, val restTime: Int, val set
     private var remainingTime: Long = 0;
     private var isRunning = false;
     private var stopTimerfn: () -> Unit = stopTimerFunction;
-    private companion object {
-        const val PREP_TIME: Long = 10;
+    public companion object {
+        const val PREP_TIME: Int = 10;
     }
 
     abstract fun onUpdate(millisRemaining: Long);
@@ -27,7 +27,7 @@ abstract class HiitTimer(private val activeTime: Int, val restTime: Int, val set
         status = TimerStatus.PREPARE;
         onStatusChange(status, set);
 
-        timer = object : CountDownTimer(PREP_TIME * 1000, 50) {
+        timer = object : CountDownTimer(PREP_TIME * 1000L, 50) {
             override fun onTick(millisRemaining: Long) {
                 if (isRunning)
                     onUpdate(millisRemaining);
