@@ -8,14 +8,13 @@ enum class TimerStatus {
     REST
 }
 
-abstract class HiitTimer(private val activeTime: Int, val restTime: Int, val setAmount: Int, stopTimerFunction: () -> Unit) {
-    private var set: Int = setAmount;
-    private var status: TimerStatus = TimerStatus.PREPARE;
+abstract class HiitTimer(private val activeTime: Int, val restTime: Int, var set: Int, stopTimerFunction: () -> Unit) {
+    var status: TimerStatus = TimerStatus.PREPARE;
     private var timer: CountDownTimer? = null;
     private var remainingTime: Long = 0;
     private var isRunning = false;
-    private var stopTimerfn: () -> Unit = stopTimerFunction;
-    public companion object {
+    private var stopTimerFn: () -> Unit = stopTimerFunction;
+    companion object {
         const val PREP_TIME: Int = 10;
     }
 
@@ -99,7 +98,7 @@ abstract class HiitTimer(private val activeTime: Int, val restTime: Int, val set
 
     private fun startRest() {
         if (set == 1) {
-            stopTimerfn();
+            stopTimerFn();
         } else {
             status = TimerStatus.REST;
             onStatusChange(status, set);

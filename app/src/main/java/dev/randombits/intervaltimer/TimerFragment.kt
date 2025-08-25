@@ -28,6 +28,7 @@ class TimerFragment : Fragment() {
     private var setAmount: Int? = null;
     private var mainActivity: MainActivity? = null;
     private var timer: HiitTimer? = null;
+    private var secondsRemaining: Int? = null;
 
     override fun onAttach(context: Context) {
         super.onAttach(context);
@@ -72,6 +73,7 @@ class TimerFragment : Fragment() {
         timer = object : HiitTimer(activeTime!!, restTime!!, setAmount!!, ::stopTimer) {
             override fun onUpdate(millisRemaining: Long) {
                 resultTextView.text = ((millisRemaining + 999) / 1000).toString();
+                secondsRemaining = Integer.parseInt(resultTextView.text as String);
 
                 if (millisRemaining in 2951..3049) {
                     mainActivity!!.soundAlarm();
@@ -109,10 +111,25 @@ class TimerFragment : Fragment() {
     private fun setFinishTime(view: View) {
         val finishTimeLabel = StringBuilder();
         val finishTimeValue = Calendar.getInstance();
+        var timeAmount = 0;
         val finishTime = view.findViewById<TextView>(R.id.finishTime);
         finishTime.visibility = if (showTime == true) View.VISIBLE else View.INVISIBLE;
 
-        finishTimeValue.add(Calendar.SECOND, ((activeTime!! + restTime!!) * setAmount!!) + HiitTimer.PREP_TIME - restTime!!);
+        if (secondsRemaining == null) { // Workout starts
+            timeAmount = ((activeTime!! + restTime!!) * setAmount!!) + HiitTimer.PREP_TIME - restTime!!;
+        } else {    // Workout is resumed
+            timeAmount = when (timer?.status) {
+                TimerStatus.PREPARE -> ((activeTime!! + restTime!!) * setAmount!!) + secondsRemaining!! - restTime!!;
+                TimerStatus.ACTIVE -> ((activeTime!! + restTime!!) * (timer!!.set - 1)) + (secondsRemaining!! + restTime!!) - restTime!!;
+                TimerStatus.REST -> ((activeTime!! + restTime!!) * (timer!!.set - 1)) + secondsRemaining!! - restTime!!;
+                null -> 0
+            }
+        }
+        finishTimeValue.add(
+            Calendar.SECOND,
+            timeAmount
+        );
+
         finishTimeLabel.append(getString(R.string.endTime))
                         .append(": ").append(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(finishTimeValue.time));
         finishTime.text = finishTimeLabel.toString();
@@ -129,6 +146,7 @@ class TimerFragment : Fragment() {
     private fun resumeTimer() {
         requireView().findViewById<View>(R.id.resumeBtn).isVisible = false;
         requireView().findViewById<View>(R.id.pauseBtn).isVisible = true;
+        setFinishTime(requireView());
         timer!!.resume()
     }
 
